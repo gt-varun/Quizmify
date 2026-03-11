@@ -26,6 +26,7 @@ export default function Play() {
   const [streakProtected, setStreakProtected] = useState(false);
   const [hiddenOptions, setHiddenOptions] = useState([]);
   const [boostersEnabled, setBoostersEnabled] = useState(true);
+  const [revealed, setRevealed] = useState(false);
   const questionStartTime = useRef(Date.now());
 
   useEffect(() => {
@@ -74,6 +75,7 @@ export default function Play() {
       setActiveBooster(null);
       setTimeFrozen(false);
       setStreakProtected(false);
+      setRevealed(false);
     }
   }, [currentIdx, questions]);
 
@@ -99,7 +101,7 @@ export default function Play() {
       } catch (_) {}
     };
     fetchLB();
-    const interval = setInterval(fetchLB, 3000);
+    const interval = setInterval(fetchLB, 5000);
     return () => clearInterval(interval);
   }, [quizInfo]);
 
@@ -147,7 +149,7 @@ export default function Play() {
     const currentQ = questions[currentIdx];
     const userAnswer = timeExpired ? '' : (answers[currentQ._id] || '');
     const timeSpent = Math.floor((Date.now() - questionStartTime.current) / 1000);
-    const isCorrect = userAnswer.toLowerCase().trim() === currentQ.correct_answer.toLowerCase().trim();
+    const isCorrect = userAnswer.trim() !== '' && userAnswer.toLowerCase().trim() === currentQ.correct_answer.toLowerCase().trim();
 
     let pointsEarned = 0;
     if (isCorrect) {
@@ -160,7 +162,7 @@ export default function Play() {
     }
 
     const detail = {
-      question_id: currentQ._id,
+      question_id: String(currentQ._id),
       user_answer: userAnswer,
       correct_answer: currentQ.correct_answer,
       is_correct: isCorrect,
@@ -175,21 +177,29 @@ export default function Play() {
     const newScore = Math.max(0, score + pointsEarned);
     setScore(newScore);
 
-    await api.patch(`/participants/${participantId}`, { score: newScore, answer_details: newDetails });
+    try {
+      await api.patch(`/participants/${participantId}`, { score: newScore, answer_details: newDetails });
+    } catch (err) {
+      console.error('Failed to save answer:', err);
+    }
 
     if (currentIdx < questions.length - 1) {
       setCurrentIdx(currentIdx + 1);
     } else {
       setSubmitting(true);
-      const totalTime = newDetails.reduce((s, d) => s + d.time_spent, 0);
-      await api.patch(`/participants/${participantId}`, {
-        score: newScore,
-        answers,
-        answer_details: newDetails,
-        total_time_spent: totalTime,
-        completed: true,
-        completed_at: new Date().toISOString(),
-      });
+      try {
+        const totalTime = newDetails.reduce((s, d) => s + d.time_spent, 0);
+        await api.patch(`/participants/${participantId}`, {
+          score: newScore,
+          answers,
+          answer_details: newDetails,
+          total_time_spent: totalTime,
+          completed: true,
+          completed_at: new Date().toISOString(),
+        });
+      } catch (err) {
+        console.error('Failed to save final result:', err);
+      }
       setShowResult(true);
       setTimeout(() => navigate(`/results/${code}/${participantId}`), 1500);
       setSubmitting(false);
@@ -261,20 +271,39 @@ export default function Play() {
 
               {currentQ.type === 'multiple_choice' && visibleOptions ? (
                 <div className="space-y-3">
-                  {visibleOptions.map((opt, i) => (
-                    <label key={i} style={{
-                      backgroundColor: answers[currentQ._id] === opt ? '#5B3FBF' : '#353570',
-                      borderColor: answers[currentQ._id] === opt ? '#a78bfa' : '#6060a0',
-                      color: '#ffffff',
-                      borderWidth: '2px',
-                      borderStyle: 'solid',
-                    }}
-                      className="flex items-center p-4 rounded-lg cursor-pointer transition-all hover:brightness-125">
-                      <input type="radio" name="answer" value={opt} checked={answers[currentQ._id] === opt}
-                        onChange={e => setAnswers(p => ({ ...p, [currentQ._id]: e.target.value }))} className="sr-only" />
-                      <span className="font-semibold text-base">{opt}</span>
-                    </label>
-                  ))}
+                  {visibleOptions.map((opt, i) => {
+                    const isSelected = answers[currentQ._id] === opt;
+                    const isCorrectOpt = opt === currentQ.correct_answer;
+                    let bg = '#353570', border = '#6060a0';
+                    if (revealed) {
+                      if (isCorrectOpt) { bg = '#166534'; border = '#4ade80'; }
+                      else if (isSelected && !isCorrectOpt) { bg = '#7f1d1d'; border = '#f87171'; }
+                      else { bg = '#252545'; border = '#4B4B7A'; }
+                    } else if (isSelected) {
+                      bg = '#5B3FBF'; border = '#a78bfa';
+                    }
+                    return (
+                      <label key={i} style={{ backgroundColor: bg, borderColor: border, color: '#ffffff', borderWidth: '2px', borderStyle: 'solid' }}
+                        className={`flex items-center justify-between p-4 rounded-lg transition-all ${revealed ? 'cursor-default' : 'cursor-pointer hover:brightness-125'}`}>
+                        <input type="radio" name="answer" value={opt} checked={isSelected}
+                          onChange={e => {
+                            if (revealed) return;
+                            setAnswers(p => ({ ...p, [currentQ._id]: e.target.value }));
+                          }} className="sr-only" />
+                        <span className="font-semibold text-base">{opt}</span>
+                        {revealed && isCorrectOpt && <span className="text-green-400 font-bold text-lg">✓</span>}
+                        {revealed && isSelected && !isCorrectOpt && <span className="text-red-400 font-bold text-lg">✗</span>}
+                      </label>
+                    );
+                  })}
+                  {revealed && (
+                    <div style={{ backgroundColor: answers[currentQ._id] === currentQ.correct_answer ? '#14532d' : '#7f1d1d' }}
+                      className="p-3 rounded-lg text-center font-bold text-white">
+                      {answers[currentQ._id] === currentQ.correct_answer
+                        ? `✓ Correct! +${currentQ.points} pts`
+                        : `✗ Wrong! Correct answer: ${currentQ.correct_answer}`}
+                    </div>
+                  )}
                 </div>
               ) : (
                 <div>
@@ -288,8 +317,11 @@ export default function Play() {
               )}
 
               <button type="submit" disabled={submitting}
+                onClick={currentQ.type === 'multiple_choice' && !revealed && answers[currentQ._id] ? (e) => { e.preventDefault(); setRevealed(true); } : undefined}
                 className="w-full btn-primary py-4 text-lg flex items-center justify-center gap-2">
-                {submitting ? <><Loader2 className="w-5 h-5 animate-spin" /> Submitting...</> : currentIdx < questions.length - 1 ? 'Next Question' : 'Submit Quiz'}
+                {submitting ? <><Loader2 className="w-5 h-5 animate-spin" /> Submitting...</>
+                  : currentQ.type === 'multiple_choice' && !revealed && answers[currentQ._id] ? '👁 Reveal Answer'
+                  : currentIdx < questions.length - 1 ? 'Next Question →' : 'Submit Quiz'}
               </button>
             </form>
           </div>

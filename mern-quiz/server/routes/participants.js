@@ -45,7 +45,7 @@ router.patch('/:id', async (req, res) => {
       if (req.body[key] !== undefined) updates[key] = req.body[key];
     }
 
-    const participant = await Participant.findByIdAndUpdate(req.params.id, updates, { new: true });
+    const participant = await Participant.findByIdAndUpdate(req.params.id, { $set: updates }, { new: true });
     if (!participant) return res.status(404).json({ message: 'Participant not found' });
 
     res.json(participant);
@@ -61,7 +61,7 @@ router.get('/quiz/:quizCode/leaderboard', async (req, res) => {
     if (!quiz) return res.status(404).json({ message: 'Quiz not found' });
 
     const leaderboard = await Participant.find({ quiz_id: quiz._id, is_host: false })
-      .select('id name score completed')
+      .select('_id name score completed')
       .sort({ score: -1 })
       .limit(10);
 

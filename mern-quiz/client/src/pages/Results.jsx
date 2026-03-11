@@ -167,7 +167,7 @@ export default function Results() {
             <h2 className="text-2xl font-bold mb-4 flex items-center gap-2"><BarChart3 className="w-6 h-6 text-primary" /> Question Review</h2>
             <div className="space-y-3">
               {questions.map((q, i) => {
-                const ans = answerDetails.find(a => a.question_id === q._id);
+                const ans = answerDetails.find(a => String(a.question_id) === String(q._id));
                 return (
                   <div key={q._id} className={`p-4 rounded-lg border ${!ans ? 'border-yellow-500/30 bg-yellow-500/5' : ans.is_correct ? 'border-green-500/30 bg-green-500/5' : 'border-red-500/30 bg-red-500/5'}`}>
                     <div className="flex items-start justify-between mb-2">
