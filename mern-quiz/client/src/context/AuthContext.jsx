@@ -12,7 +12,10 @@ export function AuthProvider({ children }) {
     if (token) {
       api.get('/auth/me')
         .then(res => setUser(res.data.user))
-        .catch(() => localStorage.removeItem('token'))
+        .catch(err => {
+          // Only log out on 401 Unauthorized, not on network errors or rate limits
+          if (err.response?.status === 401) localStorage.removeItem('token');
+        })
         .finally(() => setLoading(false));
     } else {
       setLoading(false);
