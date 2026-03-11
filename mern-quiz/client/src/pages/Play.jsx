@@ -215,31 +215,30 @@ export default function Play() {
   const visibleOptions = currentQ.options?.filter(o => !hiddenOptions.includes(o));
 
   return (
-    <div className="min-h-screen p-4 relative">
-      <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-background to-accent/5 pointer-events-none" />
+    <div className="min-h-screen p-4" style={{ backgroundColor: '#0F0F1A' }}>
       <div className="flex gap-4 max-w-7xl mx-auto">
         <div className="flex-1">
-          <div className="card p-8 border-primary/30 shadow-lg shadow-primary/20 bg-[#1A1A2E]">
+          <div className="p-8 rounded-xl border border-purple-500/30 shadow-xl" style={{ backgroundColor: '#252545' }}>
             {/* Header */}
             <div className="mb-6">
               <div className="flex justify-between items-center mb-2">
-                <span className="text-sm text-muted-foreground">Question {currentIdx + 1} of {questions.length}</span>
+                <span className="text-sm text-gray-400">Question {currentIdx + 1} of {questions.length}</span>
                 <div className="flex items-center gap-4">
                   {streak > 1 && (
-                    <span className="text-sm font-semibold px-3 py-1 rounded bg-orange-500/20 text-orange-500 animate-pulse">
+                    <span className="text-sm font-semibold px-3 py-1 rounded bg-orange-500/20 text-orange-400 animate-pulse">
                       🔥 {streak} Streak
                     </span>
                   )}
-                  <span className={`text-sm font-semibold px-3 py-1 rounded ${currentQ.difficulty === 'hard' ? 'bg-red-500/20 text-red-500' : currentQ.difficulty === 'medium' ? 'bg-yellow-500/20 text-yellow-500' : 'bg-green-500/20 text-green-500'}`}>
+                  <span className={`text-sm font-semibold px-3 py-1 rounded ${currentQ.difficulty === 'hard' ? 'bg-red-500/20 text-red-400' : currentQ.difficulty === 'medium' ? 'bg-yellow-500/20 text-yellow-400' : 'bg-green-500/20 text-green-400'}`}>
                     {currentQ.difficulty} ({currentQ.points}pts)
                   </span>
-                  <div className={`flex items-center gap-2 px-3 py-1 rounded ${timeFrozen ? 'bg-cyan-500/20 text-cyan-500' : timeRemaining <= 10 ? 'bg-red-500/20 text-red-500 animate-pulse' : 'bg-primary/20 text-primary'}`}>
+                  <div className={`flex items-center gap-2 px-3 py-1 rounded ${timeFrozen ? 'bg-cyan-500/20 text-cyan-400' : timeRemaining <= 10 ? 'bg-red-500/20 text-red-400 animate-pulse' : 'bg-purple-500/20 text-purple-300'}`}>
                     <Clock className="w-4 h-4" />
                     <span className="font-bold">{timeFrozen ? '⏸️ ' : ''}{timeRemaining}s</span>
                   </div>
                 </div>
               </div>
-              <div className="w-full bg-muted rounded-full h-2">
+              <div className="w-full rounded-full h-2" style={{ backgroundColor: '#161630' }}>
                 <div className="bg-gradient-to-r from-primary to-accent h-2 rounded-full transition-all duration-300" style={{ width: `${progress}%` }} />
               </div>
             </div>
@@ -263,11 +262,12 @@ export default function Play() {
               {currentQ.type === 'multiple_choice' && visibleOptions ? (
                 <div className="space-y-3">
                   {visibleOptions.map((opt, i) => (
-                    <label key={i} className={`flex items-center p-4 rounded-lg border-2 cursor-pointer transition-all ${
-                      answers[currentQ._id] === opt
-                        ? 'border-primary bg-primary/20 text-white'
-                        : 'border-[#3D3D5C] bg-[#22223A] text-white hover:border-primary/60 hover:bg-[#2A2A45]'
-                    }`}>
+                    <label key={i} style={{
+                      backgroundColor: answers[currentQ._id] === opt ? '#3B2F6B' : '#1A1A38',
+                      borderColor: answers[currentQ._id] === opt ? '#8B5CF6' : '#4B4B7A',
+                      color: '#ffffff',
+                    }}
+                      className="flex items-center p-4 rounded-lg border-2 cursor-pointer transition-all hover:brightness-110">
                       <input type="radio" name="answer" value={opt} checked={answers[currentQ._id] === opt}
                         onChange={e => setAnswers(p => ({ ...p, [currentQ._id]: e.target.value }))} className="sr-only" />
                       <span className="font-medium text-base">{opt}</span>
@@ -276,8 +276,11 @@ export default function Play() {
                 </div>
               ) : (
                 <div>
-                  <label className="label">Your Answer</label>
-                  <textarea className="input resize-none min-h-[100px]" placeholder="Type your answer here..."
+                  <label className="block text-sm font-medium text-white mb-1">Your Answer</label>
+                  <textarea
+                    style={{ backgroundColor: '#161630', borderColor: '#4B4B7A', color: '#ffffff' }}
+                    className="w-full rounded-lg px-3 py-2 border resize-none min-h-[100px] placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-purple-400/50"
+                    placeholder="Type your answer here..."
                     value={answers[currentQ._id] || ''} onChange={e => setAnswers(p => ({ ...p, [currentQ._id]: e.target.value }))} />
                 </div>
               )}
@@ -292,23 +295,26 @@ export default function Play() {
 
         {/* Live Leaderboard */}
         <div className="w-72 hidden lg:block">
-          <div className="card p-6 border-primary/30 sticky top-4">
+          <div className="p-6 rounded-xl border border-purple-500/30 sticky top-4" style={{ backgroundColor: '#252545' }}>
             <div className="flex items-center gap-2 mb-4">
               <Trophy className="w-6 h-6 text-yellow-500" />
-              <h3 className="text-xl font-bold">Live Leaderboard</h3>
+              <h3 className="text-xl font-bold text-white">Live Leaderboard</h3>
             </div>
             <div className="space-y-2">
               {leaderboard.map((p, i) => (
-                <div key={p._id} className={`p-3 rounded-lg border ${p._id === participantId ? 'border-primary bg-primary/10' : 'border-border'}`}>
+                <div key={p._id} style={{
+                  backgroundColor: p._id === participantId ? '#3B2F6B' : '#1A1A38',
+                  borderColor: p._id === participantId ? '#8B5CF6' : '#4B4B7A',
+                }} className="p-3 rounded-lg border">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                      <span className={`font-bold ${i === 0 ? 'text-yellow-500' : i === 1 ? 'text-gray-400' : i === 2 ? 'text-orange-500' : 'text-muted-foreground'}`}>
+                      <span className={`font-bold ${i === 0 ? 'text-yellow-400' : i === 1 ? 'text-gray-400' : i === 2 ? 'text-orange-400' : 'text-gray-500'}`}>
                         #{i + 1}
                       </span>
-                      <span className="text-sm truncate max-w-[100px]">{p.name}</span>
+                      <span className="text-sm text-white truncate max-w-[100px]">{p.name}</span>
                     </div>
                     <div className="flex items-center gap-1">
-                      <span className="text-primary font-bold">{p.score}</span>
+                      <span className="text-purple-400 font-bold">{p.score}</span>
                       {p.completed && <CheckCircle2 className="w-3 h-3 text-green-500" />}
                     </div>
                   </div>
