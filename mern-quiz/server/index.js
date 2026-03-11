@@ -38,8 +38,10 @@ const aiLimiter = rateLimit({
   legacyHeaders: false,
 });
 
-// Routes
-app.use('/api/auth', authLimiter, authRoutes);
+// Routes — apply auth limiter only to login/register, not /me
+app.post('/api/auth/login', authLimiter);
+app.post('/api/auth/register', authLimiter);
+app.use('/api/auth', authRoutes);
 app.use('/api/quizzes', quizRoutes);
 app.use('/api/questions', questionRoutes);
 app.use('/api/participants', participantRoutes);
