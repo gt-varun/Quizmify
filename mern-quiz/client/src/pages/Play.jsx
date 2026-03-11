@@ -218,7 +218,7 @@ export default function Play() {
     <div className="min-h-screen p-4" style={{ backgroundColor: '#0F0F1A' }}>
       <div className="flex gap-4 max-w-7xl mx-auto">
         <div className="flex-1">
-          <div className="p-8 rounded-xl border border-purple-500/30 shadow-xl" style={{ backgroundColor: '#252545' }}>
+          <div className="p-8 rounded-xl border border-purple-500/40 shadow-xl" style={{ backgroundColor: '#2E2E5A' }}>
             {/* Header */}
             <div className="mb-6">
               <div className="flex justify-between items-center mb-2">
@@ -263,14 +263,16 @@ export default function Play() {
                 <div className="space-y-3">
                   {visibleOptions.map((opt, i) => (
                     <label key={i} style={{
-                      backgroundColor: answers[currentQ._id] === opt ? '#3B2F6B' : '#1A1A38',
-                      borderColor: answers[currentQ._id] === opt ? '#8B5CF6' : '#4B4B7A',
+                      backgroundColor: answers[currentQ._id] === opt ? '#5B3FBF' : '#353570',
+                      borderColor: answers[currentQ._id] === opt ? '#a78bfa' : '#6060a0',
                       color: '#ffffff',
+                      borderWidth: '2px',
+                      borderStyle: 'solid',
                     }}
-                      className="flex items-center p-4 rounded-lg border-2 cursor-pointer transition-all hover:brightness-110">
+                      className="flex items-center p-4 rounded-lg cursor-pointer transition-all hover:brightness-125">
                       <input type="radio" name="answer" value={opt} checked={answers[currentQ._id] === opt}
                         onChange={e => setAnswers(p => ({ ...p, [currentQ._id]: e.target.value }))} className="sr-only" />
-                      <span className="font-medium text-base">{opt}</span>
+                      <span className="font-semibold text-base">{opt}</span>
                     </label>
                   ))}
                 </div>
