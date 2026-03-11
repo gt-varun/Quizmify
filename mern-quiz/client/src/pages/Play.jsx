@@ -216,10 +216,10 @@ export default function Play() {
 
   return (
     <div className="min-h-screen p-4 relative">
-      <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-background to-accent/10 pointer-events-none" />
+      <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-background to-accent/5 pointer-events-none" />
       <div className="flex gap-4 max-w-7xl mx-auto">
         <div className="flex-1">
-          <div className="card p-8 border-primary/30 shadow-lg shadow-primary/20">
+          <div className="card p-8 border-primary/30 shadow-lg shadow-primary/20 bg-[#1A1A2E]">
             {/* Header */}
             <div className="mb-6">
               <div className="flex justify-between items-center mb-2">
@@ -258,15 +258,19 @@ export default function Play() {
             )}
 
             <form onSubmit={handleSubmit} className="space-y-6">
-              <h3 className="text-2xl font-bold">{currentQ.question}</h3>
+              <h3 className="text-2xl font-bold text-white leading-snug">{currentQ.question}</h3>
 
               {currentQ.type === 'multiple_choice' && visibleOptions ? (
                 <div className="space-y-3">
                   {visibleOptions.map((opt, i) => (
-                    <label key={i} className={`flex items-center p-4 rounded-lg border-2 cursor-pointer transition-all ${answers[currentQ._id] === opt ? 'border-primary bg-primary/10' : 'border-border hover:border-primary/40'}`}>
+                    <label key={i} className={`flex items-center p-4 rounded-lg border-2 cursor-pointer transition-all ${
+                      answers[currentQ._id] === opt
+                        ? 'border-primary bg-primary/20 text-white'
+                        : 'border-[#3D3D5C] bg-[#22223A] text-white hover:border-primary/60 hover:bg-[#2A2A45]'
+                    }`}>
                       <input type="radio" name="answer" value={opt} checked={answers[currentQ._id] === opt}
                         onChange={e => setAnswers(p => ({ ...p, [currentQ._id]: e.target.value }))} className="sr-only" />
-                      <span className="font-medium">{opt}</span>
+                      <span className="font-medium text-base">{opt}</span>
                     </label>
                   ))}
                 </div>
