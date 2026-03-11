@@ -47,9 +47,9 @@ export default function Auth() {
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4 relative">
-      <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-background to-accent/10 pointer-events-none" />
+      <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-background to-accent/5 pointer-events-none" />
 
-      <div className="card w-full max-w-md p-8 relative border-primary/30 shadow-lg shadow-primary/20">
+      <div className="w-full max-w-md p-8 relative border border-primary/30 shadow-lg shadow-primary/20 rounded-xl bg-[#1E1E32]">
         <div className="text-center mb-8">
           <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-primary to-accent mb-4 animate-glow">
             <GraduationCap className="w-8 h-8 text-white" />
@@ -61,10 +61,10 @@ export default function Auth() {
         </div>
 
         {/* Tabs */}
-        <div className="flex rounded-lg bg-muted p-1 mb-6">
+        <div className="flex rounded-lg bg-[#12122A] p-1 mb-6 border border-[#3D3D5C]">
           {['login', 'signup'].map(t => (
             <button key={t} onClick={() => setTab(t)}
-              className={`flex-1 py-2 rounded-md text-sm font-medium capitalize transition-all ${tab === t ? 'bg-card text-foreground shadow' : 'text-muted-foreground'}`}>
+              className={`flex-1 py-2 rounded-md text-sm font-medium capitalize transition-all ${tab === t ? 'bg-primary text-white shadow' : 'text-gray-400 hover:text-white'}`}>
               {t === 'login' ? 'Login' : 'Sign Up'}
             </button>
           ))}

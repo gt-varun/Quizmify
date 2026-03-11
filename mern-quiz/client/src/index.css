@@ -21,8 +21,14 @@
     @apply border border-border text-foreground px-4 py-2 rounded-lg hover:bg-muted transition-all;
   }
   .input {
-    @apply w-full bg-card border border-border rounded-lg px-3 py-2 text-foreground
-           placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50;
+    @apply w-full border rounded-lg px-3 py-2 text-white
+           placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-primary/50;
+    background-color: #12122A;
+    border-color: #3D3D5C;
+  }
+  .input option {
+    background-color: #1E1E32;
+    color: #F1F0FB;
   }
   .label {
     @apply text-sm font-medium text-foreground mb-1 block;

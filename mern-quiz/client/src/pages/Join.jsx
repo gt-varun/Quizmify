@@ -28,26 +28,27 @@ export default function Join() {
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4 relative">
-      <div className="absolute inset-0 bg-gradient-to-br from-secondary/10 via-background to-accent/10 pointer-events-none" />
-      <div className="card w-full max-w-md p-8 border-secondary/30 shadow-lg shadow-secondary/20">
+      <div className="absolute inset-0 bg-gradient-to-br from-secondary/5 via-background to-accent/5 pointer-events-none" />
+      <div className="w-full max-w-md p-8 rounded-xl border border-secondary/30 shadow-lg shadow-secondary/20 bg-[#1E1E32]">
         <div className="text-center mb-8">
           <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-secondary to-accent mb-4 animate-glow">
             <LogIn className="w-8 h-8 text-white" />
           </div>
           <h1 className="text-4xl font-bold mb-2 bg-gradient-to-r from-secondary via-accent to-primary bg-clip-text text-transparent">Join Quiz</h1>
-          <p className="text-muted-foreground">Enter the quiz code to participate</p>
+          <p className="text-gray-400">Enter the quiz code to participate</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <label className="label">Quiz Code</label>
-            <input className="input text-center text-2xl font-bold tracking-widest uppercase"
+            <label className="label text-white">Quiz Code</label>
+            <input className="w-full rounded-lg px-3 py-3 text-center text-2xl font-bold tracking-widest uppercase text-white placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-secondary/50 border border-[#3D3D5C] bg-[#12122A]"
               placeholder="XXXXXX" value={code} onChange={e => setCode(e.target.value.toUpperCase())}
               maxLength={6} disabled={loading} />
           </div>
           <div>
-            <label className="label">Your Name</label>
-            <input className="input" placeholder="Enter your name" value={name}
+            <label className="label text-white">Your Name</label>
+            <input className="w-full rounded-lg px-3 py-3 text-white placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-secondary/50 border border-[#3D3D5C] bg-[#12122A]"
+              placeholder="Enter your name" value={name}
               onChange={e => setName(e.target.value)} disabled={loading} />
           </div>
           <button type="submit" disabled={loading}
