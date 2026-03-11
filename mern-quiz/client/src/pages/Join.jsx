@@ -27,9 +27,8 @@ export default function Join() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 relative">
-      <div className="absolute inset-0 bg-gradient-to-br from-secondary/5 via-background to-accent/5 pointer-events-none" />
-      <div className="w-full max-w-md p-8 rounded-xl border border-secondary/30 shadow-lg shadow-secondary/20 bg-[#1E1E32]">
+    <div className="min-h-screen flex items-center justify-center p-4 relative" style={{ backgroundColor: '#0F0F1A' }}>
+      <div className="w-full max-w-md p-8 rounded-xl border border-purple-500/40 shadow-2xl" style={{ backgroundColor: '#252545' }}>
         <div className="text-center mb-8">
           <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-secondary to-accent mb-4 animate-glow">
             <LogIn className="w-8 h-8 text-white" />
@@ -40,14 +39,18 @@ export default function Join() {
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <label className="label text-white">Quiz Code</label>
-            <input className="w-full rounded-lg px-3 py-3 text-center text-2xl font-bold tracking-widest uppercase text-white placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-secondary/50 border border-[#3D3D5C] bg-[#12122A]"
+            <label className="block text-sm font-medium text-white mb-1">Quiz Code</label>
+            <input
+              style={{ backgroundColor: '#161630', borderColor: '#4B4B7A', color: '#ffffff' }}
+              className="w-full rounded-lg px-3 py-3 text-center text-2xl font-bold tracking-widest uppercase placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-cyan-400/50 border"
               placeholder="XXXXXX" value={code} onChange={e => setCode(e.target.value.toUpperCase())}
               maxLength={6} disabled={loading} />
           </div>
           <div>
-            <label className="label text-white">Your Name</label>
-            <input className="w-full rounded-lg px-3 py-3 text-white placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-secondary/50 border border-[#3D3D5C] bg-[#12122A]"
+            <label className="block text-sm font-medium text-white mb-1">Your Name</label>
+            <input
+              style={{ backgroundColor: '#161630', borderColor: '#4B4B7A', color: '#ffffff' }}
+              className="w-full rounded-lg px-3 py-3 placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-cyan-400/50 border"
               placeholder="Enter your name" value={name}
               onChange={e => setName(e.target.value)} disabled={loading} />
           </div>
