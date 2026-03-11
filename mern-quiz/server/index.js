@@ -22,14 +22,7 @@ app.use(cors({
 
 app.use(express.json());
 
-// Rate limiting
-const generalLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 200,
-  message: { message: 'Too many requests, please try again later.' },
-  standardHeaders: true,
-  legacyHeaders: false,
-});
+// Rate limiting — only protect auth and AI endpoints
 const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 20,
@@ -38,13 +31,12 @@ const authLimiter = rateLimit({
   legacyHeaders: false,
 });
 const aiLimiter = rateLimit({
-  windowMs: 60 * 1000, // 1 minute
+  windowMs: 60 * 1000,
   max: 5,
   message: { message: 'AI generation limit reached, please wait a moment.' },
   standardHeaders: true,
   legacyHeaders: false,
 });
-app.use('/api/', generalLimiter);
 
 // Routes
 app.use('/api/auth', authLimiter, authRoutes);
