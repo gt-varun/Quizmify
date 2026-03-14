@@ -318,7 +318,7 @@ export default function Auth() {
               onError={() => toast.error('Google sign-in failed')}
               theme="outline"
               size="large"
-              width="100%"
+              width={350}
               text={tab === 'login' ? 'signin_with' : 'signup_with'}
             />
           </div>
