@@ -14,6 +14,9 @@ dotenv.config();
 
 const app = express();
 
+// Trust proxy (required for Render/reverse proxy + rate limiting)
+app.set('trust proxy', 1);
+
 // Middleware
 app.use(cors({
   origin: true, // allows any localhost port during development
