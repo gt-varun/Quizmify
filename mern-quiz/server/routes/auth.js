@@ -127,7 +127,8 @@ router.post('/forgot-password', async (req, res) => {
 
     res.json({ message: 'If that email exists, an OTP has been sent.' });
   } catch (err) {
-    res.status(500).json({ message: 'Failed to send OTP. Please try again.' });
+    console.error('Forgot password error:', err.message);
+    res.status(500).json({ message: 'Failed to send OTP. Please try again.', debug: err.message });
   }
 });
 
