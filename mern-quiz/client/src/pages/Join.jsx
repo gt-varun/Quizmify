@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { toast } from 'sonner';
 import { Loader2, LogIn } from 'lucide-react';
 import api from '../lib/api.js';
@@ -7,7 +7,7 @@ import { useAuth } from '../context/AuthContext.jsx';
 
 export default function Join() {
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   const [code, setCode] = useState('');
   const [name, setName] = useState('');
   const [loading, setLoading] = useState(false);
@@ -17,6 +17,30 @@ export default function Join() {
       setName(user.full_name);
     }
   }, [user]);
+
+  if (authLoading) return (
+    <div className="min-h-screen flex items-center justify-center">
+      <Loader2 className="w-8 h-8 animate-spin text-primary" />
+    </div>
+  );
+
+  if (!user) return (
+    <div className="min-h-screen flex items-center justify-center p-4">
+      <div className="w-full max-w-md">
+        <div className="card p-8 border-primary/20 text-center">
+          <LogIn className="w-12 h-12 mx-auto mb-4 text-primary" />
+          <h2 className="text-xl font-bold text-foreground mb-2">Login Required</h2>
+          <p className="text-muted-foreground text-sm mb-6">
+            You need to be logged in to join a quiz.
+          </p>
+          <Link to="/auth" state={{ from: '/join' }}
+            className="btn-primary inline-flex items-center gap-2 px-6 py-3">
+            <LogIn className="w-4 h-4" /> Sign In
+          </Link>
+        </div>
+      </div>
+    </div>
+  );
 
   const handleSubmit = async (e) => {
     e.preventDefault();

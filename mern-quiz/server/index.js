@@ -41,6 +41,7 @@ const aiLimiter = rateLimit({
 // Routes — apply auth limiter only to login/register, not /me
 app.post('/api/auth/login', authLimiter);
 app.post('/api/auth/register', authLimiter);
+app.post('/api/auth/forgot-password', authLimiter);
 app.use('/api/auth', authRoutes);
 app.use('/api/quizzes', quizRoutes);
 app.use('/api/questions', questionRoutes);

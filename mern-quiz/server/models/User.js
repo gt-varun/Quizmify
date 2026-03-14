@@ -23,6 +23,14 @@ const userSchema = new mongoose.Schema({
     enum: ['under-18', '18-25', '26-35', '36-50', '50+', ''],
     default: '',
   },
+  resetOTP: {
+    type: String,
+    default: null,
+  },
+  resetOTPExpiry: {
+    type: Date,
+    default: null,
+  },
 }, { timestamps: true });
 
 userSchema.pre('save', async function (next) {

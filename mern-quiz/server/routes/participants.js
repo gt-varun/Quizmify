@@ -6,7 +6,7 @@ import { protect, optionalAuth } from '../middleware/auth.js';
 const router = express.Router();
 
 // POST /api/participants/join — join a quiz
-router.post('/join', optionalAuth, async (req, res) => {
+router.post('/join', protect, async (req, res) => {
   try {
     const { code, name } = req.body;
     if (!code || !name) return res.status(400).json({ message: 'Code and name are required' });
@@ -14,10 +14,14 @@ router.post('/join', optionalAuth, async (req, res) => {
     const quiz = await Quiz.findOne({ code: code.toUpperCase() });
     if (!quiz) return res.status(404).json({ message: 'Quiz not found. Please check the code.' });
 
+    if (quiz.status === 'closed') {
+      return res.status(403).json({ message: 'This quiz is currently closed and not accepting participants.' });
+    }
+
     const participant = await Participant.create({
       quiz_id: quiz._id,
       name: name.trim(),
-      user_id: req.user?._id || null,
+      user_id: req.user._id,
     });
 
     res.status(201).json({ participant, quizCode: quiz.code });

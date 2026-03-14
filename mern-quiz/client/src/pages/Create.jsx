@@ -1,13 +1,15 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { toast } from 'sonner';
-import { Loader2, Sparkles, PenLine, Wand2, Zap } from 'lucide-react';
+import { Loader2, Sparkles, PenLine, Wand2, Zap, LogIn } from 'lucide-react';
 import api from '../lib/api.js';
+import { useAuth } from '../context/AuthContext.jsx';
 import AIQuestionGenerator from '../components/quiz-creation/AIQuestionGenerator.jsx';
 import ManualQuestionCreator from '../components/quiz-creation/ManualQuestionCreator.jsx';
 
 export default function Create() {
   const navigate = useNavigate();
+  const { user, loading: authLoading } = useAuth();
   const [topic, setTopic] = useState('');
   const [difficulty, setDifficulty] = useState('medium');
   const [timer, setTimer] = useState(30);
@@ -29,6 +31,30 @@ export default function Create() {
   };
 
   const removeQuestion = (id) => setFinalQuestions(prev => prev.filter(q => q.id !== id));
+
+  if (authLoading) return (
+    <div className="min-h-screen flex items-center justify-center">
+      <Loader2 className="w-8 h-8 animate-spin text-primary" />
+    </div>
+  );
+
+  if (!user) return (
+    <div className="min-h-screen flex items-center justify-center p-4">
+      <div className="w-full max-w-md">
+        <div className="card p-8 border-primary/20 text-center">
+          <LogIn className="w-12 h-12 mx-auto mb-4 text-primary" />
+          <h2 className="text-xl font-bold text-foreground mb-2">Login Required</h2>
+          <p className="text-muted-foreground text-sm mb-6">
+            You need to be logged in to create a quiz.
+          </p>
+          <Link to="/auth" state={{ from: '/create' }}
+            className="btn-primary inline-flex items-center gap-2 px-6 py-3">
+            <LogIn className="w-4 h-4" /> Sign In
+          </Link>
+        </div>
+      </div>
+    </div>
+  );
 
   const handleCreate = async () => {
     if (!topic.trim()) return toast.error('Please enter a quiz topic');

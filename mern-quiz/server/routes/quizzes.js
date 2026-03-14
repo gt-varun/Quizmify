@@ -20,7 +20,7 @@ function getPoints(difficulty) {
 }
 
 // POST /api/quizzes — create quiz
-router.post('/', optionalAuth, async (req, res) => {
+router.post('/', protect, async (req, res) => {
   try {
     const { topic, difficulty, timerPerQuestion, boostersEnabled, questions } = req.body;
 
@@ -43,7 +43,7 @@ router.post('/', optionalAuth, async (req, res) => {
       difficulty_mode: difficulty || 'medium',
       timer_per_question: timerPerQuestion || 30,
       boosters_enabled: boostersEnabled !== false,
-      created_by: req.user?._id || null,
+      created_by: req.user._id,
     });
 
     const questionsToInsert = questions.map((q) => {
@@ -130,6 +130,30 @@ router.get('/user/created', protect, async (req, res) => {
     }));
 
     res.json(quizzesWithCounts);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+// PATCH /api/quizzes/:code/status — toggle quiz open/closed
+router.patch('/:code/status', protect, async (req, res) => {
+  try {
+    const quiz = await Quiz.findOne({ code: req.params.code.toUpperCase() });
+    if (!quiz) return res.status(404).json({ message: 'Quiz not found' });
+
+    if (!quiz.created_by || quiz.created_by.toString() !== req.user._id.toString()) {
+      return res.status(403).json({ message: 'Only the quiz creator can change the status' });
+    }
+
+    const { status } = req.body;
+    if (!['open', 'closed'].includes(status)) {
+      return res.status(400).json({ message: 'Status must be "open" or "closed"' });
+    }
+
+    quiz.status = status;
+    await quiz.save();
+
+    res.json({ quiz });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }

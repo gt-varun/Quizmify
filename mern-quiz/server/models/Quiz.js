@@ -34,6 +34,11 @@ const quizSchema = new mongoose.Schema({
     ref: 'User',
     default: null,
   },
+  status: {
+    type: String,
+    enum: ['open', 'closed'],
+    default: 'open',
+  },
 }, { timestamps: true });
 
 export default mongoose.model('Quiz', quizSchema);
