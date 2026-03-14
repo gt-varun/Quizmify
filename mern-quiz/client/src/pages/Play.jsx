@@ -271,18 +271,18 @@ export default function Play() {
               {currentQ.type === 'multiple_choice' && visibleOptions ? (
                 <div className="space-y-3">
                   {visibleOptions.map((opt, i) => {
-                    const isSelected = answers[currentQ._id] === opt;
-                    const isCorrectOpt = opt === currentQ.correct_answer;
-                    let bg = '#353570', border = '#6060a0';
+                    const isSelected = (answers[currentQ._id] || '').toLowerCase().trim() === opt.toLowerCase().trim();
+                    const isCorrectOpt = opt.toLowerCase().trim() === currentQ.correct_answer.toLowerCase().trim();
+                    let bg = '#353570', border = '#6060a0', shadow = 'none';
                     if (revealed) {
-                      if (isCorrectOpt) { bg = '#166534'; border = '#4ade80'; }
-                      else if (isSelected && !isCorrectOpt) { bg = '#7f1d1d'; border = '#f87171'; }
+                      if (isCorrectOpt) { bg = '#15803d'; border = '#22c55e'; shadow = '0 0 15px rgba(34,197,94,0.5)'; }
+                      else if (isSelected && !isCorrectOpt) { bg = '#991b1b'; border = '#ef4444'; shadow = '0 0 10px rgba(239,68,68,0.3)'; }
                       else { bg = '#252545'; border = '#4B4B7A'; }
                     } else if (isSelected) {
                       bg = '#5B3FBF'; border = '#a78bfa';
                     }
                     return (
-                      <label key={i} style={{ backgroundColor: bg, borderColor: border, color: '#ffffff', borderWidth: '2px', borderStyle: 'solid' }}
+                      <label key={i} style={{ backgroundColor: bg, borderColor: border, color: '#ffffff', borderWidth: revealed && (isCorrectOpt || (isSelected && !isCorrectOpt)) ? '3px' : '2px', borderStyle: 'solid', boxShadow: shadow }}
                         className={`flex items-center justify-between p-4 rounded-lg transition-all ${revealed ? 'cursor-default' : 'cursor-pointer hover:brightness-125'}`}>
                         <input type="radio" name="answer" value={opt} checked={isSelected}
                           onChange={e => {
@@ -290,19 +290,32 @@ export default function Play() {
                             setAnswers(p => ({ ...p, [currentQ._id]: e.target.value }));
                           }} className="sr-only" />
                         <span className="font-semibold text-base">{opt}</span>
-                        {revealed && isCorrectOpt && <span className="text-green-400 font-bold text-lg">✓</span>}
-                        {revealed && isSelected && !isCorrectOpt && <span className="text-red-400 font-bold text-lg">✗</span>}
+                        {revealed && isCorrectOpt && (
+                          <span className="flex items-center gap-1 text-green-300 font-bold text-base">
+                            ✓ Correct
+                          </span>
+                        )}
+                        {revealed && isSelected && !isCorrectOpt && (
+                          <span className="flex items-center gap-1 text-red-300 font-bold text-base">
+                            ✗ Wrong
+                          </span>
+                        )}
                       </label>
                     );
                   })}
-                  {revealed && (
-                    <div style={{ backgroundColor: answers[currentQ._id] === currentQ.correct_answer ? '#14532d' : '#7f1d1d' }}
-                      className="p-3 rounded-lg text-center font-bold text-white">
-                      {answers[currentQ._id] === currentQ.correct_answer
-                        ? `✓ Correct! +${currentQ.points} pts`
-                        : `✗ Wrong! Correct answer: ${currentQ.correct_answer}`}
-                    </div>
-                  )}
+                  {revealed && (() => {
+                    const userAns = (answers[currentQ._id] || '').toLowerCase().trim();
+                    const correctAns = currentQ.correct_answer.toLowerCase().trim();
+                    const isRight = userAns !== '' && userAns === correctAns;
+                    return (
+                      <div style={{ backgroundColor: isRight ? '#14532d' : '#991b1b', borderColor: isRight ? '#22c55e' : '#ef4444', borderWidth: '2px', borderStyle: 'solid' }}
+                        className="p-4 rounded-lg text-center font-bold text-white text-lg">
+                        {isRight
+                          ? `✓ Correct! +${currentQ.points} pts`
+                          : `✗ Wrong! The correct answer is: ${currentQ.correct_answer}`}
+                      </div>
+                    );
+                  })()}
                 </div>
               ) : (
                 <div>

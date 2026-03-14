@@ -41,14 +41,33 @@ export default function Create() {
         difficulty,
         timerPerQuestion: timer,
         boostersEnabled,
-        questions: finalQuestions.map(q => ({
-          type: q.type,
-          question: q.question,
-          options: q.options?.slice(0, optionCount),
-          correct_answer: q.correct_answer,
-          difficulty: q.difficulty,
-          subtopic: q.subtopic,
-        })),
+        questions: finalQuestions.map(q => {
+          let opts = q.options || [];
+          let correctAnswer = q.correct_answer;
+
+          if (opts.length > optionCount) {
+            // Always keep the correct answer in the sliced options
+            const correctIdx = opts.findIndex(o => o.toLowerCase().trim() === correctAnswer.toLowerCase().trim());
+            opts = opts.slice(0, optionCount);
+            if (correctIdx >= optionCount && correctIdx !== -1) {
+              // Correct answer was sliced off — swap it in for a random wrong option
+              opts[opts.length - 1] = q.options[correctIdx];
+            }
+          }
+
+          // Ensure correct_answer exactly matches the option text
+          const exactMatch = opts.find(o => o.toLowerCase().trim() === correctAnswer.toLowerCase().trim());
+          if (exactMatch) correctAnswer = exactMatch;
+
+          return {
+            type: q.type,
+            question: q.question,
+            options: opts,
+            correct_answer: correctAnswer,
+            difficulty: q.difficulty,
+            subtopic: q.subtopic,
+          };
+        }),
       });
 
       toast.success(`Quiz created! Code: ${res.data.code}`);

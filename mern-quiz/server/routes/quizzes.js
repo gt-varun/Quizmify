@@ -46,18 +46,29 @@ router.post('/', optionalAuth, async (req, res) => {
       created_by: req.user?._id || null,
     });
 
-    const questionsToInsert = questions.map((q) => ({
-      quiz_id: quiz._id,
-      type: q.type || 'multiple_choice',
-      question: q.question,
-      options: q.options || null,
-      correct_answer: q.correct_answer,
-      difficulty: q.difficulty || difficulty || 'medium',
-      points: getPoints(q.difficulty || difficulty || 'medium'),
-      time_limit: timerPerQuestion || 30,
-      topic,
-      subtopic: q.subtopic || null,
-    }));
+    const questionsToInsert = questions.map((q) => {
+      let correctAnswer = q.correct_answer;
+      const opts = q.options || [];
+
+      // Normalize: ensure correct_answer exactly matches one of the options
+      if (opts.length > 0 && !opts.includes(correctAnswer)) {
+        const match = opts.find(o => o.toLowerCase().trim() === correctAnswer.toLowerCase().trim());
+        if (match) correctAnswer = match;
+      }
+
+      return {
+        quiz_id: quiz._id,
+        type: q.type || 'multiple_choice',
+        question: q.question,
+        options: opts.length > 0 ? opts : null,
+        correct_answer: correctAnswer,
+        difficulty: q.difficulty || difficulty || 'medium',
+        points: getPoints(q.difficulty || difficulty || 'medium'),
+        time_limit: timerPerQuestion || 30,
+        topic,
+        subtopic: q.subtopic || null,
+      };
+    });
 
     await Question.insertMany(questionsToInsert);
 
