@@ -60,19 +60,15 @@ export default function HostResults() {
   const TABS = [['leaderboard', 'Leaderboard'], ['questions', 'Questions'], ['individual', 'Individual'], ['insights', 'Insights']];
 
   return (
-    <div className="min-h-screen p-4 md:p-8 relative">
-      <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-background to-accent/10 pointer-events-none" />
-      <div className="max-w-7xl mx-auto relative">
+    <div className="min-h-screen p-4 md:p-8">
+      <div className="max-w-7xl mx-auto">
 
-        <div className="card p-6 mb-6 border-primary/30">
+        <div className="card p-6 mb-6">
           <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
             <div>
-              <div className="flex items-center gap-2 mb-2">
-                <Award className="w-8 h-8 text-primary" />
-                <h1 className="text-3xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">Host Analytics</h1>
-              </div>
-              <p className="text-xl">{quiz?.topic}</p>
-              <p className="text-sm text-muted-foreground">Code: {quiz?.code}</p>
+              <h1 className="text-2xl font-bold text-foreground mb-1">Host Analytics</h1>
+              <p className="text-lg text-foreground">{quiz?.topic}</p>
+              <p className="text-sm text-muted-foreground">Code: <span className="font-mono font-bold text-primary">{quiz?.code}</span></p>
             </div>
             <button onClick={() => navigate('/')} className="btn-outline flex items-center gap-2"><Home className="w-4 h-4" /> Home</button>
           </div>

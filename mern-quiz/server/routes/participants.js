@@ -1,12 +1,12 @@
 import express from 'express';
 import Participant from '../models/Participant.js';
 import Quiz from '../models/Quiz.js';
-import { protect } from '../middleware/auth.js';
+import { protect, optionalAuth } from '../middleware/auth.js';
 
 const router = express.Router();
 
 // POST /api/participants/join — join a quiz
-router.post('/join', async (req, res) => {
+router.post('/join', optionalAuth, async (req, res) => {
   try {
     const { code, name } = req.body;
     if (!code || !name) return res.status(400).json({ message: 'Code and name are required' });
@@ -17,6 +17,7 @@ router.post('/join', async (req, res) => {
     const participant = await Participant.create({
       quiz_id: quiz._id,
       name: name.trim(),
+      user_id: req.user?._id || null,
     });
 
     res.status(201).json({ participant, quizCode: quiz.code });

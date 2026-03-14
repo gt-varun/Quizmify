@@ -61,18 +61,11 @@ export default function Create() {
   };
 
   return (
-    <div className="min-h-screen p-4 relative">
-      <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-background to-accent/10 pointer-events-none" />
-
-      <div className="max-w-6xl mx-auto relative space-y-6">
-        <div className="text-center py-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-primary to-accent mb-4 animate-glow">
-            <Wand2 className="w-8 h-8 text-white" />
-          </div>
-          <h1 className="text-4xl font-bold mb-2 bg-gradient-to-r from-primary via-accent to-secondary bg-clip-text text-transparent">
-            Create Your Quiz
-          </h1>
-          <p className="text-muted-foreground">Use AI, create manually, or combine both!</p>
+    <div className="min-h-screen p-4 md:p-8">
+      <div className="max-w-6xl mx-auto space-y-6">
+        <div className="mb-2">
+          <h1 className="text-3xl font-bold text-foreground">Create Your Quiz</h1>
+          <p className="text-muted-foreground mt-1">Use AI, create manually, or combine both</p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

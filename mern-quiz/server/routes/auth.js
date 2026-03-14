@@ -56,4 +56,46 @@ router.get('/me', protect, (req, res) => {
   res.json({ user: req.user.toProfile ? req.user.toProfile() : req.user });
 });
 
+// PATCH /api/auth/profile — update name and age category
+router.patch('/profile', protect, async (req, res) => {
+  try {
+    const { full_name, age_category } = req.body;
+    const updates = {};
+    if (full_name !== undefined) updates.full_name = full_name.trim();
+    if (age_category !== undefined) updates.age_category = age_category;
+
+    const user = await User.findByIdAndUpdate(req.user._id, { $set: updates }, { new: true }).select('-password');
+    if (!user) return res.status(404).json({ message: 'User not found' });
+
+    res.json({ user: user.toProfile() });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+// PATCH /api/auth/password — change password
+router.patch('/password', protect, async (req, res) => {
+  try {
+    const { currentPassword, newPassword } = req.body;
+    if (!currentPassword || !newPassword) {
+      return res.status(400).json({ message: 'Current and new passwords are required' });
+    }
+    if (newPassword.length < 6) {
+      return res.status(400).json({ message: 'New password must be at least 6 characters' });
+    }
+
+    const user = await User.findById(req.user._id);
+    if (!user || !(await user.comparePassword(currentPassword))) {
+      return res.status(400).json({ message: 'Current password is incorrect' });
+    }
+
+    user.password = newPassword;
+    await user.save();
+
+    res.json({ message: 'Password updated successfully' });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
 export default router;

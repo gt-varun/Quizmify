@@ -2,33 +2,79 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Light theme (default) */
+:root, .light {
+  --color-primary: #6366F1;
+  --color-secondary: #06B6D4;
+  --color-accent: #8B5CF6;
+  --color-background: #F8FAFC;
+  --color-foreground: #1E293B;
+  --color-card: #FFFFFF;
+  --color-card-foreground: #1E293B;
+  --color-muted: #F1F5F9;
+  --color-muted-foreground: #64748B;
+  --color-border: #E2E8F0;
+  --color-input-bg: #FFFFFF;
+  --color-input-border: #CBD5E1;
+  --color-input-option-bg: #FFFFFF;
+  --shadow-card: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-card-hover: 0 4px 12px rgba(0,0,0,0.08), 0 2px 4px rgba(0,0,0,0.04);
+}
+
+/* Dark theme */
+.dark {
+  --color-primary: #8B5CF6;
+  --color-secondary: #06B6D4;
+  --color-accent: #F59E0B;
+  --color-background: #0F0F1A;
+  --color-foreground: #F1F0FB;
+  --color-card: #1A1A2E;
+  --color-card-foreground: #F1F0FB;
+  --color-muted: #374151;
+  --color-muted-foreground: #9CA3AF;
+  --color-border: #2D2D44;
+  --color-input-bg: #12122A;
+  --color-input-border: #3D3D5C;
+  --color-input-option-bg: #1E1E32;
+  --shadow-card: 0 1px 3px rgba(0,0,0,0.3), 0 1px 2px rgba(0,0,0,0.2);
+  --shadow-card-hover: 0 4px 12px rgba(0,0,0,0.4), 0 2px 4px rgba(0,0,0,0.3);
+}
+
 @layer base {
   body {
     @apply bg-background text-foreground;
     font-family: 'Inter', system-ui, sans-serif;
+    transition: background-color 0.2s ease, color 0.2s ease;
   }
 }
 
 @layer components {
   .card {
     @apply bg-card rounded-xl border border-border;
+    box-shadow: var(--shadow-card);
+    transition: box-shadow 0.2s ease, border-color 0.2s ease;
+  }
+  .card:hover {
+    box-shadow: var(--shadow-card-hover);
   }
   .btn-primary {
     @apply bg-gradient-to-r from-primary to-accent text-white font-semibold px-4 py-2 rounded-lg
-           hover:opacity-90 transition-all disabled:opacity-50 disabled:cursor-not-allowed;
+           hover:opacity-90 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed;
   }
   .btn-outline {
-    @apply border border-border text-foreground px-4 py-2 rounded-lg hover:bg-muted transition-all;
+    @apply border border-border text-foreground px-4 py-2 rounded-lg hover:bg-muted transition-all duration-200;
   }
   .input {
-    @apply w-full border rounded-lg px-3 py-2 text-white
-           placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-primary/50;
-    background-color: #12122A;
-    border-color: #3D3D5C;
+    @apply w-full border rounded-lg px-3 py-2 text-foreground
+           placeholder:text-muted-foreground focus:outline-none focus:ring-2;
+    background-color: var(--color-input-bg);
+    border-color: var(--color-input-border);
+    --tw-ring-color: var(--color-primary);
+    --tw-ring-opacity: 0.5;
   }
   .input option {
-    background-color: #1E1E32;
-    color: #F1F0FB;
+    background-color: var(--color-input-option-bg);
+    color: var(--color-foreground);
   }
   .label {
     @apply text-sm font-medium text-foreground mb-1 block;

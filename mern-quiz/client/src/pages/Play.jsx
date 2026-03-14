@@ -60,8 +60,7 @@ export default function Play() {
         }
       }
     } catch (err) {
-      toast.error('Failed to load quiz');
-      navigate('/');
+      toast.error('Failed to load quiz. Please try again.');
     } finally {
       setLoading(false);
     }
